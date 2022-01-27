@@ -2,24 +2,25 @@ package com.maxel.decrypto.services;
 
 import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
+import com.maxel.decrypto.dto.DencryptedMessageDTO;
 import com.maxel.decrypto.dto.EncryptedMessageDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
-import java.util.stream.IntStream;
 
 @Service
 public class EncryptorService {
 
     private StringBuilder msg;
-    private IntStream received;
+    private String received;
     private char[] key;
-    private int cont;
+    private Integer cont;
 
     public EncryptedMessageDTO code(MessageRequest request) {
         initializeVars(request);
 
-        received.forEach(letter -> {
+        for(char letter : received.toLowerCase().toCharArray())
+        {
            if(Character.isWhitespace(letter))
            {
                msg.append(randomUpperCaseChar());
@@ -29,19 +30,39 @@ public class EncryptorService {
                var index = Constants.NORMALLETTER.indexOf(letter) + indexOfLetterKey(key);
                msg.append(Constants.RANDOMLETTER.toCharArray()[index]);
            }
-        });
+        }
 
         return new EncryptedMessageDTO(msg.toString());
+    }
+
+    public DencryptedMessageDTO decode(MessageRequest request) {
+        initializeVars(request);
+
+       for(char caracter : received.toCharArray())
+       {
+            if(Constants.CHARSUPPER.contains(caracter))
+            {
+                msg.append(" ");
+            }
+            else
+            {
+                var index = Constants.RANDOMLETTER.indexOf(caracter) - indexOfLetterKey(key);
+                index = index < 0 ? index * -1 : index;
+                msg.append(Constants.NORMALLETTER.toCharArray()[index]);
+            }
+       }
+
+       return new DencryptedMessageDTO(msg.toString());
     }
 
     private char randomUpperCaseChar() {
         var random = new Random();
         var number = random.nextInt(8);
-        return Constants.CHARSUPPER[number];
+        return Constants.CHARSUPPER.get(number);
     }
 
     private int indexOfLetterKey(char[] key) {
-        if(cont >= key.length) {
+        if(cont.equals(key.length)) {
             cont = 0;
         }
 
@@ -52,9 +73,8 @@ public class EncryptorService {
 
     private void initializeVars(MessageRequest request) {
         msg = new StringBuilder();
-        received = request.getMessage().toLowerCase().chars();
+        received = request.getMessage();
         key = request.getKey().trim().toLowerCase().toCharArray();
         cont = 0;
     }
-
 }

@@ -2,13 +2,13 @@ package com.maxel.decrypto.dto;
 
 import java.io.Serializable;
 
-public class EncryptedMessageDTO implements Serializable {
+public class DencryptedMessageDTO implements Serializable {
 
     private String message;
 
-    public EncryptedMessageDTO() {}
+    public DencryptedMessageDTO() {}
 
-    public EncryptedMessageDTO(String message) {
+    public DencryptedMessageDTO(String message) {
         this.message = message;
     }
 
