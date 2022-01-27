@@ -2,6 +2,7 @@ package com.maxel.decrypto.services;
 
 import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
+import com.maxel.decrypto.dto.EncryptedMessageDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -15,7 +16,7 @@ public class EncryptorService {
     private char[] key;
     private int cont;
 
-    public String code(MessageRequest request) {
+    public EncryptedMessageDTO code(MessageRequest request) {
         initializeVars(request);
 
         received.forEach(letter -> {
@@ -30,7 +31,7 @@ public class EncryptorService {
            }
         });
 
-        return msg.toString();
+        return new EncryptedMessageDTO(msg.toString());
     }
 
     private char randomUpperCaseChar() {
