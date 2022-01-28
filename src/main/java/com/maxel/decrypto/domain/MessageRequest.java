@@ -11,7 +11,7 @@ public class MessageRequest implements Serializable {
     @Length(min = 20, message = "O tamanho da mensagem deve ser de no mínimo 20 caracteres")
     private String message;
     @NotEmpty(message = "Preenchimento obrigatótio")
-    @Length(min = 5, message = "O tamanho da mensagem deve ser de no mínimo 5 caracteres")
+    @Length(min = 5, message = "O tamanho da chave deve ser de no mínimo 5 caracteres")
     private String key;
 
     public MessageRequest() {}
