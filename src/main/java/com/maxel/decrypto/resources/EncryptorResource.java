@@ -1,8 +1,7 @@
 package com.maxel.decrypto.resources;
 
 import com.maxel.decrypto.domain.MessageRequest;
-import com.maxel.decrypto.dto.DencryptedMessageDTO;
-import com.maxel.decrypto.dto.EncryptedMessageDTO;
+import com.maxel.decrypto.dto.MessageDTO;
 import com.maxel.decrypto.services.EncryptorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,13 @@ public class EncryptorResource {
     private EncryptorService service;
 
     @PostMapping(value = "/code")
-    public ResponseEntity<EncryptedMessageDTO> codeText(@Valid @RequestBody MessageRequest request) {
+    public ResponseEntity<MessageDTO> codeText(@Valid @RequestBody MessageRequest request) {
         var codeMessage = service.code(request);
         return ResponseEntity.ok().body(codeMessage);
     }
 
     @PostMapping(value = "/decode")
-    public ResponseEntity<DencryptedMessageDTO> decodeText(@Valid @RequestBody MessageRequest request) {
+    public ResponseEntity<MessageDTO> decodeText(@Valid @RequestBody MessageRequest request) {
         var codeMessage = service.decode(request);
         return ResponseEntity.ok().body(codeMessage);
     }

@@ -4,14 +4,14 @@ import com.maxel.decrypto.domain.MessageRequest;
 
 import java.io.Serializable;
 
-public class EncryptedMessageDTO implements Serializable {
+public class MessageDTO implements Serializable {
 
     private String message;
 
-    public EncryptedMessageDTO() {}
+    public MessageDTO(String message) { this.message = message; }
 
-    public EncryptedMessageDTO(MessageRequest message) {
-        this.message = message.getMessage();
+    public MessageDTO(MessageRequest request) {
+        this.message = request.getMessage();
     }
 
     public String getMessage() {

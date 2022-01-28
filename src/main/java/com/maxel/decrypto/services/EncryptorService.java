@@ -2,8 +2,7 @@ package com.maxel.decrypto.services;
 
 import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
-import com.maxel.decrypto.dto.DencryptedMessageDTO;
-import com.maxel.decrypto.dto.EncryptedMessageDTO;
+import com.maxel.decrypto.dto.MessageDTO;
 import com.maxel.decrypto.repositories.MessageRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +23,7 @@ public class EncryptorService {
     private char[] key;
     private Integer cont;
 
-    public EncryptedMessageDTO code(MessageRequest request) {
+    public MessageDTO code(MessageRequest request) {
         initializeVars(request);
         String encodedPass = encodePass(request);
 
@@ -42,10 +41,10 @@ public class EncryptorService {
         }
 
         MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodedPass));
-        return new EncryptedMessageDTO(encoded);
+        return new MessageDTO(encoded);
     }
 
-    public DencryptedMessageDTO decode(MessageRequest request) {
+    public MessageDTO decode(MessageRequest request) {
         initializeVars(request);
 
        for(char caracter : received.toCharArray())
@@ -62,7 +61,7 @@ public class EncryptorService {
             }
        }
 
-       return new DencryptedMessageDTO(msg.toString());
+       return new MessageDTO(msg.toString());
     }
 
     private char randomUpperCaseChar() {
