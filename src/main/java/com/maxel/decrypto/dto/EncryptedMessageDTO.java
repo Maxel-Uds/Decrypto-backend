@@ -1,5 +1,7 @@
 package com.maxel.decrypto.dto;
 
+import com.maxel.decrypto.domain.MessageRequest;
+
 import java.io.Serializable;
 
 public class EncryptedMessageDTO implements Serializable {
@@ -8,8 +10,8 @@ public class EncryptedMessageDTO implements Serializable {
 
     public EncryptedMessageDTO() {}
 
-    public EncryptedMessageDTO(String message) {
-        this.message = message;
+    public EncryptedMessageDTO(MessageRequest message) {
+        this.message = message.getMessage();
     }
 
     public String getMessage() {

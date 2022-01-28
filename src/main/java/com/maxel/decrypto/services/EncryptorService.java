@@ -4,12 +4,20 @@ import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
 import com.maxel.decrypto.dto.DencryptedMessageDTO;
 import com.maxel.decrypto.dto.EncryptedMessageDTO;
+import com.maxel.decrypto.repositories.MessageRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
 public class EncryptorService {
+
+    @Autowired
+    private MessageRequestRepository repository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private StringBuilder msg;
     private String received;
@@ -18,6 +26,7 @@ public class EncryptorService {
 
     public EncryptedMessageDTO code(MessageRequest request) {
         initializeVars(request);
+        String encodedPass = encodePass(request);
 
         for(char letter : received.toLowerCase().toCharArray())
         {
@@ -32,7 +41,8 @@ public class EncryptorService {
            }
         }
 
-        return new EncryptedMessageDTO(msg.toString());
+        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodedPass));
+        return new EncryptedMessageDTO(encoded);
     }
 
     public DencryptedMessageDTO decode(MessageRequest request) {
@@ -74,7 +84,11 @@ public class EncryptorService {
     private void initializeVars(MessageRequest request) {
         msg = new StringBuilder();
         received = request.getMessage();
-        key = request.getKey().trim().toLowerCase().toCharArray();
+        key = request.getPassword().trim().toLowerCase().toCharArray();
         cont = 0;
+    }
+
+    private String encodePass(MessageRequest request) {
+        return bCryptPasswordEncoder.encode(request.getPassword());
     }
 }
