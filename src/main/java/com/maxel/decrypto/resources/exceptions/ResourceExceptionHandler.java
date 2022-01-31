@@ -1,5 +1,6 @@
 package com.maxel.decrypto.resources.exceptions;
 
+import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class ResourceExceptionHandler {
             err.addError(field.getField(), field.getDefaultMessage());
         }
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+    }
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<StandardError> notFound(ObjectNotFoundException e, HttpServletRequest req) {
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(), "Not Found", e.getMessage(), req.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }
