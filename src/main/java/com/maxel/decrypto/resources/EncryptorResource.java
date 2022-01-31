@@ -27,7 +27,7 @@ public class EncryptorResource {
 
     @PostMapping(value = "/decode")
     public ResponseEntity<MessageDTO> decodeText(@Valid @RequestBody MessageRequest request) {
-        var codeMessage = service.decode(request);
+        var codeMessage = service.checkPassword(request);
         return ResponseEntity.ok().body(codeMessage);
     }
 }

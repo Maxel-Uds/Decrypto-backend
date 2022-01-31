@@ -4,10 +4,12 @@ import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
 import com.maxel.decrypto.dto.MessageDTO;
 import com.maxel.decrypto.repositories.MessageRequestRepository;
+import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -23,15 +25,19 @@ public class EncryptorService {
     private char[] key;
     private Integer cont;
 
+    public MessageRequest findById(Integer id) {
+        Optional<MessageRequest> request = repository.findById(id);
+        return request.orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
+    }
+
     public MessageDTO code(MessageRequest request) {
         initializeVars(request);
-        String encodedPass = encodePass(request);
 
         for(char letter : received.toLowerCase().toCharArray())
         {
            if(Character.isWhitespace(letter))
            {
-               msg.append(randomUpperCaseChar());
+               msg.append(Constants.CHARSUPPER.get(randomIndex(8)));
            }
            else
            {
@@ -40,13 +46,29 @@ public class EncryptorService {
            }
         }
 
-        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodedPass));
+        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodePass(request), request.getMessageCode()));
         return new MessageDTO(encoded);
     }
 
-    public MessageDTO decode(MessageRequest request) {
+    public MessageDTO checkPassword(MessageRequest request) {
+        var obj = findById(request.getMessageCode());
         initializeVars(request);
 
+        if(bCryptPasswordEncoder.matches(request.getPassword(), obj.getPassword()))
+        {
+            return decode(request);
+        }
+        else
+        {
+            for(char caracter : request.getMessage().toCharArray()) {
+                msg.append(Constants.RANDOMLETTER.toCharArray()[randomIndex(96)]);
+            }
+
+            return new MessageDTO(msg.toString());
+        }
+    }
+
+    public MessageDTO decode(MessageRequest request) {
        for(char caracter : received.toCharArray())
        {
             if(Constants.CHARSUPPER.contains(caracter))
@@ -61,13 +83,13 @@ public class EncryptorService {
             }
        }
 
+       repository.deleteById(request.getMessageCode());
        return new MessageDTO(msg.toString());
     }
 
-    private char randomUpperCaseChar() {
+    private Integer randomIndex(Integer number) {
         var random = new Random();
-        var number = random.nextInt(8);
-        return Constants.CHARSUPPER.get(number);
+        return random.nextInt(number);
     }
 
     private int indexOfLetterKey(char[] key) {
