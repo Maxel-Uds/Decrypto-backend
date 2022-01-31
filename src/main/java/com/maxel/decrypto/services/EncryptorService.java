@@ -45,12 +45,12 @@ public class EncryptorService {
            }
         }
 
-        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodePass(request), request.getMessageCode()));
+        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodePass(request), request.getId()));
         return new MessageDTO(encoded);
     }
 
     public MessageDTO checkPassword(MessageRequest request) {
-        var obj = findById(request.getMessageCode());
+        var obj = findById(request.getId());
         initializeVars(request);
 
         if(bCryptPasswordEncoder.matches(request.getPassword(), obj.getPassword()))
@@ -76,7 +76,7 @@ public class EncryptorService {
             }
        }
 
-       repository.deleteById(request.getMessageCode());
+       repository.deleteById(request.getId());
        return new MessageDTO(msg.toString());
     }
 

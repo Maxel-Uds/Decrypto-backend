@@ -13,7 +13,7 @@ public class MessageRequest implements Serializable {
 
     @Id
     @NotNull(message = "Criar um código numérico para a mensagem é obrigatório")
-    private Integer messageCode;
+    private Integer id;
     @NotEmpty(message = "Preenchimento obrigatótio")
     @Length(min = 20, message = "O tamanho da mensagem deve ser de no mínimo 20 caracteres")
     private String message;
@@ -26,7 +26,7 @@ public class MessageRequest implements Serializable {
     public MessageRequest(String msg, String pass, Integer code) {
         this.message = msg;
         this.password = pass;
-        this.messageCode = code;
+        this.id = code;
     }
 
     public String getMessage() {
@@ -45,12 +45,12 @@ public class MessageRequest implements Serializable {
         this.password = pass;
     }
 
-    public Integer getMessageCode() {
-        return messageCode;
+    public Integer getId() {
+        return id;
     }
 
-    public void setMessageCode(Integer messageCode) {
-        this.messageCode = messageCode;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class MessageRequest implements Serializable {
         if (this == o) return true;
         if (!(o instanceof MessageRequest)) return false;
         MessageRequest that = (MessageRequest) o;
-        return getMessageCode().equals(that.getMessageCode());
+        return getId().equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMessageCode());
+        return Objects.hash(getId());
     }
 }
