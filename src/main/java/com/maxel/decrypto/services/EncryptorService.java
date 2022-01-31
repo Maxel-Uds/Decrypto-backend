@@ -90,9 +90,9 @@ public class EncryptorService {
             cont = 0;
         }
 
-        var letter = Constants.NORMALLETTER.indexOf(key[cont]);
+        var index = Constants.NORMALLETTER.indexOf(key[cont]);
         cont++;
-        return letter;
+        return index;
     }
 
     private void initializeVars(MessageRequest request) {
