@@ -33,16 +33,15 @@ public class EncryptorService {
     public MessageDTO code(MessageRequest request) {
         initializeVars(request);
 
-        for(char letter : received.toLowerCase().toCharArray())
+        for(char caracter : received.toLowerCase().toCharArray())
         {
-           if(Character.isWhitespace(letter))
+           if(Character.isWhitespace(caracter))
            {
                msg.append(Constants.CHARSUPPER.get(randomIndex(8)));
            }
            else
            {
-               var index = Constants.NORMALLETTER.indexOf(letter) + indexOfLetterKey(key);
-               msg.append(Constants.RANDOMLETTER.toCharArray()[index]);
+               appendChar(Constants.NORMALLETTER, Constants.RANDOMLETTER, 1, caracter);
            }
         }
 
@@ -60,11 +59,7 @@ public class EncryptorService {
         }
         else
         {
-            for(char caracter : request.getMessage().toCharArray()) {
-                msg.append(Constants.RANDOMLETTER.toCharArray()[randomIndex(96)]);
-            }
-
-            return new MessageDTO(msg.toString());
+            return generateRandomMessageDTO(request.getMessage());
         }
     }
 
@@ -77,9 +72,7 @@ public class EncryptorService {
             }
             else
             {
-                var index = Constants.RANDOMLETTER.indexOf(caracter) - indexOfLetterKey(key);
-                index = index < 0 ? index * -1 : index;
-                msg.append(Constants.NORMALLETTER.toCharArray()[index]);
+                appendChar(Constants.RANDOMLETTER, Constants.NORMALLETTER, -1, caracter);
             }
        }
 
@@ -111,5 +104,19 @@ public class EncryptorService {
 
     private String encodePass(MessageRequest request) {
         return bCryptPasswordEncoder.encode(request.getPassword());
+    }
+
+    private MessageDTO generateRandomMessageDTO(String message) {
+        for(char caracter : message.toCharArray()) {
+            msg.append(Constants.RANDOMLETTER.toCharArray()[randomIndex(96)]);
+        }
+
+        return new MessageDTO(msg.toString());
+    }
+
+    private void appendChar(String sum, String pick, Integer action, Character character) {
+        var index = sum.indexOf(character) + (indexOfLetterKey(key) * action);
+        index = index < 0 ? index * -1 : index;
+        msg.append(pick.toCharArray()[index]);
     }
 }
