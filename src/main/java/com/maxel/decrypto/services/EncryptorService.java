@@ -4,6 +4,7 @@ import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.MessageRequest;
 import com.maxel.decrypto.dto.MessageDTO;
 import com.maxel.decrypto.repositories.MessageRequestRepository;
+import com.maxel.decrypto.services.exceptions.ObjectAlreadyExistException;
 import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,22 +27,23 @@ public class EncryptorService {
     private Integer cont;
 
     public MessageRequest findById(Integer id) {
-        Optional<MessageRequest> request = repository.findById(id);
-        return request.orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
+        return repository.findById(id)
+                .orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
     }
 
     public MessageDTO code(MessageRequest request) {
         initializeVars(request);
+        checkIfExists(request.getId());
 
         for(char caracter : received.toLowerCase().toCharArray())
         {
            if(Character.isWhitespace(caracter))
            {
-               msg.append(Constants.CHARSUPPER.get(randomIndex(8)));
+               msg.append(Constants.CHARS_UPPER.get(randomIndex(8)));
            }
            else
            {
-               appendChar(Constants.NORMALLETTER, Constants.RANDOMLETTER, 1, caracter);
+               appendChar(Constants.NORMAL_LETTER, Constants.RANDOM_LETTER, Constants.CODE, caracter);
            }
         }
 
@@ -66,18 +68,23 @@ public class EncryptorService {
     public MessageDTO decode(MessageRequest request) {
        for(char caracter : received.toCharArray())
        {
-            if(Constants.CHARSUPPER.contains(caracter))
+            if(Constants.CHARS_UPPER.contains(caracter))
             {
                 msg.append(" ");
             }
             else
             {
-                appendChar(Constants.RANDOMLETTER, Constants.NORMALLETTER, -1, caracter);
+                appendChar(Constants.RANDOM_LETTER, Constants.NORMAL_LETTER, Constants.DECODE, caracter);
             }
        }
 
        repository.deleteById(request.getId());
        return new MessageDTO(msg.toString());
+    }
+
+    private void checkIfExists(Integer id) {
+        repository.findById(id)
+                .ifPresent(obj -> { throw new ObjectAlreadyExistException("Já existe uma mensagem utilizando o código escolhido, por favor, use outro!"); });
     }
 
     private Integer randomIndex(Integer number) {
@@ -90,7 +97,7 @@ public class EncryptorService {
             cont = 0;
         }
 
-        var index = Constants.NORMALLETTER.indexOf(key[cont]);
+        var index = Constants.NORMAL_LETTER.indexOf(key[cont]);
         cont++;
         return index;
     }
@@ -108,7 +115,7 @@ public class EncryptorService {
 
     private MessageDTO generateRandomMessageDTO(String message) {
         for(char caracter : message.toCharArray()) {
-            msg.append(Constants.RANDOMLETTER.toCharArray()[randomIndex(96)]);
+            msg.append(Constants.RANDOM_LETTER.toCharArray()[randomIndex(96)]);
         }
 
         return new MessageDTO(msg.toString());
