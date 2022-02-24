@@ -1,5 +1,6 @@
 package com.maxel.decrypto.resources.exceptions;
 
+import com.maxel.decrypto.services.exceptions.ObjectAlreadyExistException;
 import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,11 @@ public class ResourceExceptionHandler {
     public ResponseEntity<StandardError> notFound(ObjectNotFoundException e, HttpServletRequest req) {
         StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(), "Not Found", e.getMessage(), req.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(ObjectAlreadyExistException.class)
+    public ResponseEntity<StandardError> alreadyExistThisId(ObjectAlreadyExistException e, HttpServletRequest req) {
+        StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(), "Id já existente", e.getMessage(), req.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 }
