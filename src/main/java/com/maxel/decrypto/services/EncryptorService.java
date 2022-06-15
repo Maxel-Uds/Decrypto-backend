@@ -1,16 +1,15 @@
 package com.maxel.decrypto.services;
 
 import com.maxel.decrypto.constants.Constants;
-import com.maxel.decrypto.domain.MessageRequest;
-import com.maxel.decrypto.dto.MessageDTO;
+import com.maxel.decrypto.domain.Message;
 import com.maxel.decrypto.repositories.MessageRequestRepository;
-import com.maxel.decrypto.services.exceptions.ObjectAlreadyExistException;
+import com.maxel.decrypto.resources.request.MessageRequest;
+import com.maxel.decrypto.resources.response.MessageResponse;
 import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -26,65 +25,43 @@ public class EncryptorService {
     private char[] key;
     private Integer cont;
 
-    public MessageRequest findById(Integer id) {
+    public Message findById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
     }
 
-    public MessageDTO code(MessageRequest request) {
+    public MessageResponse code(MessageRequest request) {
         initializeVars(request);
-        checkIfExists(request.getId());
 
         for(char caracter : received.toLowerCase().toCharArray())
         {
-           if(Character.isWhitespace(caracter))
-           {
-               msg.append(Constants.CHARS_UPPER.get(randomIndex(8)));
-           }
-           else
-           {
-               appendChar(Constants.NORMAL_LETTER, Constants.RANDOM_LETTER, Constants.CODE, caracter);
-           }
+            var ignore = Character.isWhitespace(caracter) ? msg.append(Constants.CHARS_UPPER.get(randomIndex(8))) : appendChar(Constants.NORMAL_LETTER, Constants.RANDOM_LETTER, Constants.CODE, caracter);
         }
 
-        MessageRequest encoded = repository.save(new MessageRequest(msg.toString(), encodePass(request), request.getId()));
-        return new MessageDTO(encoded);
+        Message encoded = repository.save(new Message(msg.toString(), encodePass(request.getPassword())));
+        return new MessageResponse(encoded.getId(), encoded.getMessage());
     }
 
-    public MessageDTO checkPassword(MessageRequest request) {
-        var obj = findById(request.getId());
+    public MessageResponse decode(MessageRequest request, String id) {
+        var message = findById(id);
         initializeVars(request);
 
-        if(bCryptPasswordEncoder.matches(request.getPassword(), obj.getPassword()))
-        {
-            return decode(request);
+        if(isValidPassword(message.getPassword(), request.getPassword())) {
+            for(char caracter : received.toCharArray())
+            {
+                var ignore = Constants.CHARS_UPPER.contains(caracter) ? msg.append(" ") : appendChar(Constants.RANDOM_LETTER, Constants.NORMAL_LETTER, Constants.DECODE, caracter);
+            }
+
+            repository.deleteById(message.getId());
+            return new MessageResponse(msg.toString());
         }
-        else
-        {
+        else {
             return generateRandomMessageDTO(request.getMessage());
         }
     }
 
-    public MessageDTO decode(MessageRequest request) {
-       for(char caracter : received.toCharArray())
-       {
-            if(Constants.CHARS_UPPER.contains(caracter))
-            {
-                msg.append(" ");
-            }
-            else
-            {
-                appendChar(Constants.RANDOM_LETTER, Constants.NORMAL_LETTER, Constants.DECODE, caracter);
-            }
-       }
-
-       repository.deleteById(request.getId());
-       return new MessageDTO(msg.toString());
-    }
-
-    private void checkIfExists(Integer id) {
-        repository.findById(id)
-                .ifPresent(obj -> { throw new ObjectAlreadyExistException("Já existe uma mensagem utilizando o código escolhido, por favor, use outro!"); });
+    private Boolean isValidPassword(String objectPass, String receivedPass) {
+        return bCryptPasswordEncoder.matches(receivedPass, objectPass);
     }
 
     private Integer randomIndex(Integer number) {
@@ -109,21 +86,21 @@ public class EncryptorService {
         cont = 0;
     }
 
-    private String encodePass(MessageRequest request) {
-        return bCryptPasswordEncoder.encode(request.getPassword());
+    private String encodePass(String pass) {
+        return bCryptPasswordEncoder.encode(pass);
     }
 
-    private MessageDTO generateRandomMessageDTO(String message) {
+    private MessageResponse generateRandomMessageDTO(String message) {
         for(char caracter : message.toCharArray()) {
             msg.append(Constants.RANDOM_LETTER.toCharArray()[randomIndex(96)]);
         }
 
-        return new MessageDTO(msg.toString());
+        return new MessageResponse(msg.toString());
     }
 
-    private void appendChar(String sum, String pick, Integer action, Character character) {
+    private StringBuilder appendChar(String sum, String pick, Integer action, Character character) {
         var index = sum.indexOf(character) + (indexOfLetterKey(key) * action);
         index = index < 0 ? index * -1 : index;
-        msg.append(pick.toCharArray()[index]);
+        return msg.append(pick.toCharArray()[index]);
     }
 }
