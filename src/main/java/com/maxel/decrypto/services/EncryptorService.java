@@ -3,7 +3,8 @@ package com.maxel.decrypto.services;
 import com.maxel.decrypto.constants.Constants;
 import com.maxel.decrypto.domain.Message;
 import com.maxel.decrypto.repositories.MessageRequestRepository;
-import com.maxel.decrypto.resources.request.MessageRequest;
+import com.maxel.decrypto.resources.request.CodeMessageRequest;
+import com.maxel.decrypto.resources.request.DecodeMessageRequest;
 import com.maxel.decrypto.resources.response.MessageResponse;
 import com.maxel.decrypto.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class EncryptorService {
                 .orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
     }
 
-    public MessageResponse code(MessageRequest request) {
-        initializeVars(request);
+    public MessageResponse code(CodeMessageRequest request) {
+        initializeVars(request.getPassword(), request.getMessage());
 
         for(char caracter : received.toLowerCase().toCharArray())
         {
@@ -42,9 +43,9 @@ public class EncryptorService {
         return new MessageResponse(encoded.getId(), encoded.getMessage());
     }
 
-    public MessageResponse decode(MessageRequest request, String id) {
+    public MessageResponse decode(DecodeMessageRequest request, String id) {
         var message = findById(id);
-        initializeVars(request);
+        initializeVars(request.getPassword(), request.getMessage());
 
         if(isValidPassword(message.getPassword(), request.getPassword())) {
             for(char caracter : received.toCharArray())
@@ -79,10 +80,10 @@ public class EncryptorService {
         return index;
     }
 
-    private void initializeVars(MessageRequest request) {
+    private void initializeVars(String password, String message) {
         msg = new StringBuilder();
-        received = request.getMessage();
-        key = request.getPassword().trim().toLowerCase().toCharArray();
+        received = message;
+        key = password.trim().toLowerCase().toCharArray();
         cont = 0;
     }
 

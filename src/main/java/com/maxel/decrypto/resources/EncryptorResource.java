@@ -1,6 +1,7 @@
 package com.maxel.decrypto.resources;
 
-import com.maxel.decrypto.resources.request.MessageRequest;
+import com.maxel.decrypto.resources.request.CodeMessageRequest;
+import com.maxel.decrypto.resources.request.DecodeMessageRequest;
 import com.maxel.decrypto.resources.response.MessageResponse;
 import com.maxel.decrypto.services.EncryptorService;
 import io.swagger.annotations.ApiOperation;
@@ -19,14 +20,14 @@ public class EncryptorResource {
 
     @ApiOperation(value = "Criptografa uma mensagem digitada pelo usuário baseada em uma senha escolhida por ele")
     @PostMapping(value = "/code")
-    public ResponseEntity<MessageResponse> codeText(@Valid @RequestBody MessageRequest request) {
+    public ResponseEntity<MessageResponse> codeText(@Valid @RequestBody CodeMessageRequest request) {
         var codeMessage = service.code(request);
         return ResponseEntity.ok().body(codeMessage);
     }
 
     @ApiOperation(value = "Descriptografa uma mensagem informada pelo usuário se a senha informada for a correta")
-    @GetMapping(value = "/decode/{messageId}")
-    public ResponseEntity<MessageResponse> decodeText(@Valid @RequestBody MessageRequest request, @PathVariable String messageId) {
+    @PostMapping(value = "/decode/{messageId}")
+    public ResponseEntity<MessageResponse> decodeText(@Valid @RequestBody DecodeMessageRequest request, @PathVariable String messageId) {
         var decodedMessage = service.decode(request, messageId);
         return ResponseEntity.ok().body(decodedMessage);
     }
