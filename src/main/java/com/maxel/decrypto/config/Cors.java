@@ -10,7 +10,7 @@ public class Cors implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:3000", "https://the-encryptor.herokuapp.com/")
+                    .allowedOrigins("http://localhost:3000", "https://decrypt-site.herokuapp.com/")
                     .allowedMethods("GET", "POST");
     }
 }
