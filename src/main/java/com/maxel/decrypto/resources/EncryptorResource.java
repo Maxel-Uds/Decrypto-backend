@@ -18,6 +18,12 @@ public class EncryptorResource {
     @Autowired
     private EncryptorService service;
 
+    @ApiOperation(value = "Endpoint que serve para subir a aplicação hospedada no Heroku")
+    @PostMapping(value = "/up")
+    public ResponseEntity<String> upApplication() {
+        return ResponseEntity.ok().body("Application is up!");
+    }
+
     @ApiOperation(value = "Criptografa uma mensagem digitada pelo usuário baseada em uma senha escolhida por ele")
     @PostMapping(value = "/code")
     public ResponseEntity<MessageResponse> codeText(@Valid @RequestBody CodeMessageRequest request) {

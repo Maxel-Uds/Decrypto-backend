@@ -28,8 +28,8 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
-                .globalResponseMessage(RequestMethod.POST, Arrays.asList(m422, m500))
-                .globalResponseMessage(RequestMethod.GET, Arrays.asList(m404, m422, m500))
+                .globalResponseMessage(RequestMethod.POST, Arrays.asList(m404, m422, m500))
+                .globalResponseMessage(RequestMethod.GET, Collections.singletonList(m500))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.maxel.decrypto.resources"))
                 .paths(PathSelectors.any())
