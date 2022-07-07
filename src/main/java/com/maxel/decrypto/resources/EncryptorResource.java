@@ -19,7 +19,7 @@ public class EncryptorResource {
     private EncryptorService service;
 
     @ApiOperation(value = "Endpoint que serve para subir a aplicação hospedada no Heroku")
-    @PostMapping(value = "/up")
+    @GetMapping(value = "/up")
     public ResponseEntity<String> upApplication() {
         return ResponseEntity.ok().body("Application is up!");
     }
