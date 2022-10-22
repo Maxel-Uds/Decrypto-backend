@@ -6,9 +6,6 @@ pipeline {
   environment {
     HEROKU_API_KEY = credentials('heroku-api-key')
   }
-  parameters { 
-    string(name: 'APP_NAME', defaultValue: 'the-encryptor', description: 'heroku app name') 
-  }
   stages {
     stage('Build') {
       steps {
@@ -23,15 +20,15 @@ pipeline {
     stage('Push to Heroku registry') {
       steps {
         sh '''
-          docker tag maxel/decrypto-app:latest registry.heroku.com/$APP_NAME/web
-          docker push registry.heroku.com/$APP_NAME/web
+          docker tag maxel/decrypto-app:latest registry.heroku.com/the-encryptor/web
+          docker push registry.heroku.com/the-encryptor/web
         '''
       }
     }
     stage('Release the image') {
       steps {
         sh '''
-          heroku container:release web --app=$APP_NAME
+          heroku container:release web --app=the-encryptor
         '''
       }
     }
