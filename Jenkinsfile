@@ -12,22 +12,12 @@ pipeline {
         sh 'docker build -t maxel/decrypto-app:latest .'
       }
     }
-    stage('Docker Login') {
-      steps {
-        sh 'echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com'
-      }
-    }
-    stage('Push to Heroku registry') {
+    stage('Deploy') {
       steps {
         sh '''
+          echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
           docker tag maxel/decrypto-app:latest registry.heroku.com/the-encryptor/web
           docker push registry.heroku.com/the-encryptor/web
-        '''
-      }
-    }
-    stage('Release the image') {
-      steps {
-        sh '''
           heroku container:release web --app=the-encryptor
         '''
       }
