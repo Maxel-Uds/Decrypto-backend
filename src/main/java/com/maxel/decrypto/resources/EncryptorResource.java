@@ -1,7 +1,6 @@
 package com.maxel.decrypto.resources;
 
-import com.maxel.decrypto.resources.request.CodeMessageRequest;
-import com.maxel.decrypto.resources.request.DecodeMessageRequest;
+import com.maxel.decrypto.resources.request.MessageRequest;
 import com.maxel.decrypto.resources.response.MessageResponse;
 import com.maxel.decrypto.services.EncryptorService;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +15,9 @@ import javax.validation.Valid;
 public class EncryptorResource {
 
     @Autowired
-    private EncryptorService service;
+    private EncryptorService decodeService;
+    @Autowired
+    private EncryptorService codeService;
 
     @ApiOperation(value = "Endpoint que serve para subir a aplicação hospedada no Heroku")
     @GetMapping(value = "/up")
@@ -26,15 +27,16 @@ public class EncryptorResource {
 
     @ApiOperation(value = "Criptografa uma mensagem digitada pelo usuário baseada em uma senha escolhida por ele")
     @PostMapping(value = "/code")
-    public ResponseEntity<MessageResponse> codeText(@Valid @RequestBody CodeMessageRequest request) {
-        var codeMessage = service.code(request);
+    public ResponseEntity<MessageResponse> codeText(@Valid @RequestBody MessageRequest request) {
+        var codeMessage = codeService.processMessage(request);
         return ResponseEntity.ok().body(codeMessage);
     }
 
     @ApiOperation(value = "Descriptografa uma mensagem informada pelo usuário se a senha informada for a correta")
     @PostMapping(value = "/decode/{messageId}")
-    public ResponseEntity<MessageResponse> decodeText(@Valid @RequestBody DecodeMessageRequest request, @PathVariable String messageId) {
-        var decodedMessage = service.decode(request, messageId);
+    public ResponseEntity<MessageResponse> decodeText(@Valid @RequestBody MessageRequest request, @PathVariable String messageId) {
+        request.setId(messageId);
+        var decodedMessage = decodeService.processMessage(request);
         return ResponseEntity.ok().body(decodedMessage);
     }
 }
