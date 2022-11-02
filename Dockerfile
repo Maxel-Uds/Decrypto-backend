@@ -6,9 +6,8 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-RUN ./mvnw compile
-RUN ./mvnw test
 RUN ./mvnw install -DskipTests
+RUN ./mvnw test -Dspring.profiles.active=prod
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM openjdk:11
