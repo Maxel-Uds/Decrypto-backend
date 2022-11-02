@@ -1,9 +1,13 @@
 package com.maxel.decrypto.resources.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class MessageResponse implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,22 +20,6 @@ public class MessageResponse implements Serializable {
 
     public MessageResponse(String id, String message) {
         this.id = id;
-        this.message = message;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
         this.message = message;
     }
 }

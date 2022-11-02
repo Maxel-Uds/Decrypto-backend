@@ -1,11 +1,15 @@
 package com.maxel.decrypto.resources.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class MessageRequest implements Serializable {
 
     @JsonIgnore
@@ -21,29 +25,5 @@ public class MessageRequest implements Serializable {
     public MessageRequest(String message, String password) {
         this.message = message;
         this.password = password;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

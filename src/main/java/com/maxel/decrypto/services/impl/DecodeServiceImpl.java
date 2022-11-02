@@ -6,18 +6,19 @@ import com.maxel.decrypto.resources.response.MessageResponse;
 import com.maxel.decrypto.services.EncryptorService;
 import com.maxel.decrypto.services.MessageService;
 import com.maxel.decrypto.services.PasswordService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class DecodeServiceImpl implements EncryptorService {
 
-    @Autowired
-    private PasswordService passwordService;
-    @Autowired
-    private MessageService messageService;
+    private final PasswordService passwordService;
+    private final MessageService messageService;
     private StringBuilder msg;
     private String received;
     private char[] key;
@@ -25,6 +26,8 @@ public class DecodeServiceImpl implements EncryptorService {
 
     @Override
     public MessageResponse processMessage(MessageRequest request) {
+        log.info("===== Processando a mensagem ======");
+
         var message = messageService.findMessageById(request.getId());
         initializeVars(request.getPassword(), request.getMessage());
 
