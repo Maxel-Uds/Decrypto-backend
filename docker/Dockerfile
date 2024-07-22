@@ -1,10 +1,10 @@
 FROM openjdk:11 as build
 WORKDIR /workspace/decrypto-pipeline_main
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-COPY src src
+COPY ../mvnw .
+COPY ../.mvn .mvn
+COPY ../pom.xml .
+COPY ../src src
 
 RUN ./mvnw install -DskipTests
 RUN ./mvnw test -Dspring.profiles.active=prod

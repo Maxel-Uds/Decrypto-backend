@@ -2,55 +2,33 @@ package com.maxel.decrypto.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.RequestMethod;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseMessageBuilder;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.ResponseMessage;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Arrays;
-import java.util.Collections;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springdoc.core.models.GroupedOpenApi;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
 
-    private final ResponseMessage m422 = simpleMessage(422, "Erro de validação");
-    private final ResponseMessage m500 = simpleMessage(500, "Erro inesperado");
-    private final ResponseMessage m404 = simpleMessage(404, "Não encontrado");
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .useDefaultResponseMessages(false)
-                .globalResponseMessage(RequestMethod.POST, Arrays.asList(m404, m422, m500))
-                .globalResponseMessage(RequestMethod.GET, Collections.singletonList(m500))
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.maxel.decrypto.resources"))
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo());
+    public GroupedOpenApi api() {
+        return GroupedOpenApi.builder()
+                .group("com.maxel.decrypto")
+                .pathsToMatch("/**")
+                .build();
     }
 
-    private ApiInfo apiInfo() {
-        return new ApiInfo(
-                "API para codificação e descodificação de mensagens",
-                "Esta API é de criação própria e serve para cifrar mensagens e para decifrar mensagens que foram cifradas com a mesma lógica",
-                "Versão 1.0",
-                "https://www.udemy.com/terms",
-                new Contact("Maxel Udson", "https://github.com/Maxel-Uds", "maxellopes32@gmail.com"),
-                "Uso recomendado para aqueles que tem interesse em criptografia ou apenas por diversão",
-                "https://www.udemy.com/terms",
-                Collections.emptyList()
-        );
-    }
-
-    private ResponseMessage simpleMessage(int code, String msg) {
-        return new ResponseMessageBuilder().code(code).message(msg).build();
+    @Bean
+    public OpenAPI apiInfo() {
+        return new OpenAPI()
+                .info(new Info().title("Decrypto Project - 2024")
+                        .contact(new Contact().name("Maxel Udson").url("https://github.com/Maxel-Uds").email("maxellopes32@gmail.com"))
+                        .description("Esta é uma API para criptografia e descriptografia de mensagens usando um algoritmo de substituição")
+                        .version("v0.0.1")
+                        .license(new License().name("Apache 2.0").url("http://springdoc.org"))
+                );
     }
 }

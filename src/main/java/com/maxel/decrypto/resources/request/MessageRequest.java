@@ -1,11 +1,10 @@
 package com.maxel.decrypto.resources.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Getter

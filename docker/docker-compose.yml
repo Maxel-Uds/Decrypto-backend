@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  decrypto-database:
+    image: mysql:8.1.0-oracle
+    container_name: decrypto-database
+    environment:
+      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_DATABASE: decrypto-database
+      MYSQL_USER: app
+      MYSQL_PASSWORD: ''
+    ports:
+      - "3306:3306"
+    volumes:
+      - decrypto-data:/var/lib/mysql
+
+volumes:
+  decrypto-data:

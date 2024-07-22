@@ -19,7 +19,7 @@ public class MessageServiceImpl implements MessageService {
     public Message findMessageById(String id) {
         log.info("===== Buscando mensagem com o id [{}] ======", id);
         return repository.findById(id)
-                .orElseThrow(() -> { throw new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id); });
+                .orElseThrow(() -> new ObjectNotFoundException("Nenhuma mensagem foi encontrada com o ID: " + id));
     }
 
     @Override
