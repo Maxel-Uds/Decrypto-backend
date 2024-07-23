@@ -17,6 +17,7 @@ pipeline {
             echo "Pipeline Usando Jenkinsfile"
         }
     }
+  }
 
 //     stage('Build') {
 //       steps {
