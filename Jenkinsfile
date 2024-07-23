@@ -17,6 +17,11 @@ pipeline {
                   echo "Pipeline Usando Jenkinsfile"
               }
           }
+      stage('STAGE 03'){
+              steps {
+                  echo "Pipeline Usando Jenkinsfile"
+              }
+          }
     }
 
 //     stage('Build') {
