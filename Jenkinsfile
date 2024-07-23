@@ -7,17 +7,22 @@ pipeline {
 //     HEROKU_API_KEY = credentials('heroku-api-key')
 //   }
   stages {
-    stage('STAGE 00'){
-         steps {
-            echo "Pipeline Usando Jenkinsfile"
-         }
+      stage('STAGE 00'){
+               steps {
+                  echo "Pipeline Usando Jenkinsfile"
+               }
+          }
+      stage('STAGE 00'){
+              steps {
+                  echo "Pipeline Usando Jenkinsfile"
+              }
+          }
+      stage('STAGE 00'){
+              steps {
+                  echo "Pipeline Usando Jenkinsfile"
+              }
+          }
     }
-    stage('STAGE 00'){
-        steps {
-            echo "Pipeline Usando Jenkinsfile"
-        }
-    }
-  }
 
 //     stage('Build') {
 //       steps {
